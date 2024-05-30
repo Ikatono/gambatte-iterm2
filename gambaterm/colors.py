@@ -32,6 +32,7 @@ def detect_local_color_mode(
     environ: dict[str, str] | None = None,
     timeout: float = 0.1,
 ) -> ColorMode:
+    return ColorMode.HAS_24_BIT_COLOR
     if detect_true_color_support(app_session, timeout):
         return ColorMode.HAS_24_BIT_COLOR
     if environ is None:

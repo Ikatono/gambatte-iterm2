@@ -15,7 +15,7 @@ from .termblit import blit
 from .audio import AudioOut
 from .console import Console, InputGetter
 from .colors import ColorMode
-
+from .iterm2 import make_image
 
 @contextlib.contextmanager
 def timing(deltas: Deque[float]) -> Iterator[None]:
@@ -40,7 +40,9 @@ def write_bytes(app_session: AppSession, video_data: bytes) -> None:
         sys.stdout.buffer.write(video_data)
         sys.stdout.buffer.flush()
     else:
-        os.write(app_session.output.fileno(), video_data)
+        # os.write(app_session.output.fileno(), video_data)
+        sys.stdout.buffer.write(video_data)
+        sys.stdout.buffer.flush()
 
 
 def run(
@@ -62,7 +64,8 @@ def run(
     last_frame = video.copy()
 
     # Print area
-    height, width = app_session.output.get_size()
+    # height, width = app_session.output.get_size()
+    height, width = 144, 160
     refx, refy = get_ref(width, height, console)
 
     # Prepare reporting
@@ -135,9 +138,11 @@ def run(
                     refx, refy = get_ref(width, height, console)
                     last_frame.fill(-1)
                 # Render frame
-                video_data = blit(
-                    video, last_frame, refx, refy, width - 1, height, color_mode
-                )
+                # video_data = blit(
+                #     video, last_frame, refx, refy, width - 1, height, color_mode
+                # )
+                video_data = make_image(video)
+
                 last_frame = video.copy()
                 # Update reporting
                 data_length.append(len(video_data))
